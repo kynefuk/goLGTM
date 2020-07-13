@@ -12,15 +12,6 @@ import (
 	"github.com/kynefuk/goLGTM/processor"
 )
 
-// MaxRatio is a ratio of messaging aria
-const MaxRatio float64 = 0.8
-
-// MaxFontSize is max size of font size
-const MaxFontSize float64 = 100
-
-// MinFontSize is minimum size of font size
-const MinFontSize float64 = 1
-
 // LocalImage deal with local image file
 type LocalImage struct {
 	source string
@@ -46,7 +37,7 @@ func (localImg *LocalImage) AddMessage(message string) error {
 		return fmt.Errorf("failed to process message. error: %s", err)
 	}
 
-	// Save that RGBA image to disk.
+	// save the image with message in local new file.
 	outFile, err := os.Create(newImgName(file.Name()))
 	if err != nil {
 		return fmt.Errorf("failed to create out file. error: %s", err)
@@ -58,9 +49,10 @@ func (localImg *LocalImage) AddMessage(message string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create out file. error: %s", err)
 	}
+
 	err = b.Flush()
 	if err != nil {
-		return fmt.Errorf("failed to create out file. error: %s", err)
+		return fmt.Errorf("failed to flush buffer. error: %s", err)
 	}
 
 	return nil
@@ -78,52 +70,3 @@ func newImgName(source string) string {
 func NewLocalImage(source string) *LocalImage {
 	return &LocalImage{source: source}
 }
-
-// ft, err := truetype.Parse(gobold.TTF)
-// if err != nil {
-// 	return fmt.Errorf("failed to parse font. error: %s", err)
-// }
-
-// opt := truetype.Options{
-// 	Size:              100,
-// 	DPI:               0,
-// 	Hinting:           0,
-// 	GlyphCacheEntries: 0,
-// 	SubPixelsX:        0,
-// 	SubPixelsY:        0,
-// }
-
-// face := truetype.NewFace(ft, &opt)
-
-// imageWidth := 100
-// imageHeight := 100
-// textTopMargin := 90
-// text := "L"
-
-// dst := image.NewRGBA(image.Rect(0, 0, imageWidth, imageHeight))
-
-// dr := &font.Drawer{
-// 	Dst:  dst,
-// 	Src:  image.White,
-// 	Face: face,
-// 	Dot:  fixed.Point26_6{},
-// }
-
-// dr.Dot.X = (fixed.I(imageWidth) - dr.MeasureString(text)) / 2
-// dr.Dot.Y = fixed.I(textTopMargin)
-
-// dr.DrawString(text)
-
-// buf := &bytes.Buffer{}
-// err = png.Encode(buf, dst)
-// if err != nil {
-// 	return fmt.Errorf("failed to encode. error: %s", err)
-// }
-
-// out, err := os.Create(newImgName(file.Name()))
-// out.Close()
-// if err != nil {
-// 	return fmt.Errorf("failed to create out file. error: %s", err)
-// }
-// fmt.Println(buf.Bytes())
-// out.Write(buf.Bytes())

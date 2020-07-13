@@ -18,7 +18,7 @@ func (factory *ImgSrcFactory) GetImgSrc() Image {
 	if fileExists(factory.source) {
 		return NewLocalImage(factory.source)
 	}
-	return NewLocalImage(factory.source)
+	return NewKeywordImage(factory.source)
 }
 
 func fileExists(filename string) bool {
