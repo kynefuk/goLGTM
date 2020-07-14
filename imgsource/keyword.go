@@ -1,7 +1,11 @@
 package imgsource
 
 import (
+	"bufio"
 	"fmt"
+	"github.com/kynefuk/goLGTM/processor"
+	"image"
+	"image/png"
 	"io"
 	"net/http"
 	"net/url"
@@ -11,13 +15,11 @@ import (
 )
 
 // URL is a img web site's url
-const URL = "https://loremflickr.com"
-
-// Width is a width of img
-const Width int = 800
-
-// Height is a height of img
-const Height int = 600
+const (
+	URL        = "https://loremflickr.com"
+	Width  int = 800
+	Height int = 600
+)
 
 // KeywordImage deal with remote image coresspond with keyword
 type KeywordImage struct {
@@ -35,16 +37,54 @@ func (keywordImg *KeywordImage) AddMessage(message string) error {
 	if err != nil {
 		return fmt.Errorf("failed to request to URL. error: %s", err)
 	}
-
 	defer res.Body.Close()
 
-	file, err := os.Create(keywordImg.source + ".jpg")
-	if err != nil {
-		return fmt.Errorf("failed to create file. error: %s", err)
-	}
-	defer file.Close()
+	fmt.Println(res.Header)
 
-	io.Copy(file, res.Body)
+	// save http response body to tmp file.
+	tmpFile, err := os.Create(keywordImg.source + ".jpeg")
+	if err != nil {
+		return fmt.Errorf("failed to create out file. error: %s", err)
+	}
+	defer tmpFile.Close()
+
+	io.Copy(tmpFile, res.Body)
+
+	file, err := os.Open(tmpFile.Name())
+	defer file.Close()
+	if err != nil {
+		return fmt.Errorf("failed to open file. error: %s", err)
+	}
+
+	//read tmp file to get base image.
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return fmt.Errorf("failed to decode image. error: %s", err)
+	}
+
+	msgProcessor := processor.NewProcessor(img, message)
+	rgba, err := msgProcessor.AddMessage()
+	if err != nil {
+		return fmt.Errorf("failed to process message. error: %s", err)
+	}
+
+	// save the image with message in local new file.
+	outFile, err := os.Create(newImgName(file.Name()))
+	if err != nil {
+		return fmt.Errorf("failed to create out file. error: %s", err)
+	}
+	defer outFile.Close()
+
+	b := bufio.NewWriter(outFile)
+	err = png.Encode(b, rgba)
+	if err != nil {
+		return fmt.Errorf("failed to create out file. error: %s", err)
+	}
+
+	err = b.Flush()
+	if err != nil {
+		return fmt.Errorf("failed to flush buffer. error: %s", err)
+	}
 
 	return nil
 }

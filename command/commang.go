@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -22,7 +23,12 @@ func (c *Command) Run(source, message string) error {
 
 	factory := imgsource.NewImgSrcFactory(source)
 	imgSrc := factory.GetImgSrc()
-	return imgSrc.AddMessage(message)
+	err := imgSrc.AddMessage(message)
+	if err != nil {
+		fmt.Fprintf(c.ErrStream, "error happened. error: %s\n", err)
+		return err
+	}
+	return nil
 }
 
 // NewCommand is a constructor of Command
