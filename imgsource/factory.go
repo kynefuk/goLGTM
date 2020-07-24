@@ -13,7 +13,7 @@ type ImgSrcFactory struct {
 // GetImgSrc returns image source struct from source
 func (factory *ImgSrcFactory) GetImgSrc() Image {
 	if strings.HasPrefix(factory.source, "https://") {
-		// return online image
+		return NewRemoteImage(factory.source)
 	}
 	if fileExists(factory.source) {
 		return NewLocalImage(factory.source)
