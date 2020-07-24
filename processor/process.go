@@ -2,9 +2,10 @@ package processor
 
 import (
 	"fmt"
-	"golang.org/x/image/math/fixed"
 	"image"
 	"image/draw"
+
+	"golang.org/x/image/math/fixed"
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
@@ -63,7 +64,7 @@ func (p *Processor) AddMessage() (*image.RGBA, error) {
 		}
 	}
 
-	_, fw := image.Black, image.White
+	black, _ := image.Black, image.White
 	draw.Draw(rgba, rgba.Bounds(), p.img, image.ZP, draw.Src)
 	c := freetype.NewContext()
 	c.SetDPI(72)
@@ -71,7 +72,7 @@ func (p *Processor) AddMessage() (*image.RGBA, error) {
 	c.SetFontSize(float64(fontSize))
 	c.SetClip(rgba.Bounds())
 	c.SetDst(rgba)
-	c.SetSrc(fw)
+	c.SetSrc(black)
 	c.SetHinting(font.HintingVertical)
 
 	messageYPoint := p.img.Bounds().Dy() / 2

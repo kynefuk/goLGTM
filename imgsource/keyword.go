@@ -3,7 +3,6 @@ package imgsource
 import (
 	"bufio"
 	"fmt"
-	"github.com/kynefuk/goLGTM/processor"
 	"image"
 	"image/png"
 	"io"
@@ -12,6 +11,8 @@ import (
 	"os"
 	"path"
 	"strconv"
+
+	"github.com/kynefuk/goLGTM/processor"
 )
 
 // URL is a img web site's url
@@ -39,14 +40,13 @@ func (keywordImg *KeywordImage) AddMessage(message string) error {
 	}
 	defer res.Body.Close()
 
-	fmt.Println(res.Header)
-
 	// save http response body to tmp file.
 	tmpFile, err := os.Create(keywordImg.source + ".jpeg")
 	if err != nil {
 		return fmt.Errorf("failed to create out file. error: %s", err)
 	}
 	defer tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
 
 	io.Copy(tmpFile, res.Body)
 
