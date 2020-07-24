@@ -5,12 +5,11 @@ import (
 	"image"
 	"image/draw"
 
-	"golang.org/x/image/math/fixed"
-
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/gobold"
+	"golang.org/x/image/math/fixed"
 )
 
 // MaxRatio is a ratio of messaging aria
@@ -64,7 +63,7 @@ func (p *Processor) AddMessage() (*image.RGBA, error) {
 		}
 	}
 
-	black, _ := image.Black, image.White
+	fontColor := image.Black
 	draw.Draw(rgba, rgba.Bounds(), p.img, image.ZP, draw.Src)
 	c := freetype.NewContext()
 	c.SetDPI(72)
@@ -72,7 +71,7 @@ func (p *Processor) AddMessage() (*image.RGBA, error) {
 	c.SetFontSize(float64(fontSize))
 	c.SetClip(rgba.Bounds())
 	c.SetDst(rgba)
-	c.SetSrc(black)
+	c.SetSrc(fontColor)
 	c.SetHinting(font.HintingVertical)
 
 	messageYPoint := p.img.Bounds().Dy() / 2

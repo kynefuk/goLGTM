@@ -16,22 +16,22 @@ const (
 )
 
 func main() {
-	app := &cli.App{
-		Name:  "goLGTM",
-		Usage: "make a LGTM picture.",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:    "source",
-				Aliases: []string{"s"},
-				Value:   "",
-				Usage:   "image source",
-			},
-			&cli.StringFlag{
-				Name:    "message",
-				Aliases: []string{"m"},
-				Value:   "LGTM",
-				Usage:   "message",
-			},
+	app := cli.NewApp()
+	app.Name = "GoLGTM"
+	app.Usage = "make a LGTM picture."
+
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:    "source",
+			Aliases: []string{"s"},
+			Value:   "",
+			Usage:   "image source",
+		},
+		&cli.StringFlag{
+			Name:    "message",
+			Aliases: []string{"m"},
+			Value:   "LGTM",
+			Usage:   "message",
 		},
 	}
 
@@ -43,8 +43,7 @@ func main() {
 		return command.Run(source, message)
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
+	if err := app.Run(os.Args); err != nil {
 		os.Exit(ExitCodeErr)
 	}
 	os.Exit(ExitCodeOk)
